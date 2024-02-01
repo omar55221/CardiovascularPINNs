@@ -7,24 +7,41 @@ Here, we coded a PINNs framework that uses Navier-Stroke equation, some known da
 ## Python Files
 ### main.py
 This file is the main code. All the hyperparameters are in this file. The hyperparameters are listed below:
+
 Parameters for model and the neural network
+
 Flag_GPU = 1                                                        # 0 use cpu and 1 use gpu and 2 use mps
+
 Model_dim = 3                                                       # Model dimension 2D or 3D?
+
 TimeVaryingModelFlag = 1                                            # if 0 that means the model is steady, if it is 1 that means the model is time-varying
-ActivationFunctions = ['sinusResNet', 'sinus', 'swish', 'tanh']     # (Sinus+skip connections = sinusResNet) | sinus AF FF network = sinus | swish AF FF network = swish | tanh AF FF network = tanh
+
+ActivationFunctions = ['sinusResNet', 'sinus', 'swish', 'tanh']     # (Sinus+skip connections = sinusResNet) | sinus AF FF network = sinus | swish AF FF network = swish | tanh AF FF 
+network = tanh
+
 ActivationFunction = ActivationFunctions[3]                         # Choose one of the listed neural networks.
+
 NumberOfSensorData = [200, 400, 600, 800, 1000, 1200, 1400, 1600]   # number of sensor points (you can add any number here)
+
 if Model_dim == 2:                                                  # This is the number of sensor points for the 2D stenosis case that we used
     NumberOfSensorData = [25, 100, 225, 400]
+    
 sensor_num = NumberOfSensorData[7]                                  # Choose the number of sensor points you want
+
 num_layers = 4                                                      # Choose the PINNs' number of layers
+
 dim_hidden = 128                                                    # Choose the number of neurons per layer
+
 w0 = 10                                                             # w0 hyperparameter is only for sinusoidal AF. W0=10 recommended for 3D Aorta and W0=30 recommended for 2D stenosis case.
+
 epoches = 400                                                       # number of epochs
+
 batchsize = 512                                                     # batch size
+
 shuffle = True                                                      # If you want the input data to be shuffled enter True, if not enter False.
 
 Parameters for the adaptive coefficient on PINNs loss function
+
 Lambda = 0.9                                                        # smoothing factor for moving average on Lambda_bc and Lambda_data in Loss Function
 
 Parameters of the Navier Stoke equation
