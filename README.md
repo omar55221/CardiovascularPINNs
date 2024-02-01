@@ -17,3 +17,6 @@ This file contains the function for reading the Mesh files.
 These files contain feed-forward neural networks with different activation functions.
 ### SirenResNetNN.py
 This file contains the coding for feed-forward neural networks with sinusoidal activation functions and skip connections.
+
+## JobScript.sh
+This file submits a job for running the code on Mist (Compute Canada)
