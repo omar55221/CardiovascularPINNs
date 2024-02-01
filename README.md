@@ -20,3 +20,9 @@ This file contains the coding for feed-forward neural networks with sinusoidal a
 
 ## JobScript.sh
 This file submits a job for running the code on Mist (Compute Canada)
+
+## MeshFolder2D
+This folder contains the 2D stenosis case data
+
+## Results_SimVascular_Coarse
+This folder contains the 3D stenosis case data
