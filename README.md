@@ -10,13 +10,13 @@ This file is the main code. All the hyperparameters are in this file. The hyperp
 
 Parameters for model and the neural network
 
-Flag_GPU = 1                                                        # 0 use cpu and 1 use gpu and 2 use mps
+Flag_GPU : 0 means use CPU and 1 means use gpu and 2 means use mps
 
-Model_dim = 3                                                       # Model dimension 2D or 3D?
+Model_dim : Model dimension 2D or 3D?
 
-TimeVaryingModelFlag = 1                                            # if 0 that means the model is steady, if it is 1 that means the model is time-varying
+TimeVaryingModelFlag : if 0 that means the model is steady, if it is 1 that means the model is time-varying
 
-ActivationFunctions = ['sinusResNet', 'sinus', 'swish', 'tanh']     # (Sinus+skip connections = sinusResNet) | sinus AF FF network = sinus | swish AF FF network = swish | tanh AF FF 
+ActivationFunctions : (Sinus+skip connections = sinusResNet) | sinus AF FF network = sinus | swish AF FF network = swish | tanh AF FF 
 network = tanh
 
 ActivationFunction = ActivationFunctions[3]                         # Choose one of the listed neural networks.
