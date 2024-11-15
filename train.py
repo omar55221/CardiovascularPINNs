@@ -82,7 +82,7 @@ def geo_train(InputParameters):
 
 	if InputParameters["ActivationFunction"] == "sinus":
 		if InputParameters["dim"] == 3: net2 = SirenNet(
-			dim_in=InputParameters["NumberOfInputs"],                         # input dimension, ex. 2d coor
+			dim_in=InputParameters["NumberOfInputs"],           # input dimension, ex. 2d coor
 			dim_hidden = InputParameters["NumberOfHiddenNeurons"],              # hidden dimension
 			dim_out = 4,                       									# output dimension, ex. rgb value
 			num_layers = InputParameters["NumberOfLayers"],                     # number of layers
@@ -222,25 +222,25 @@ def geo_train(InputParameters):
 
 		# scale to magnitude the losses ( not necessary )
 		if InputParameters["dim"] == 3:
-			loss_1 = u*u_x + v*u_y + w*u_z - InputParameters["Diff"]*(u_xx + u_yy + u_zz) + 1/InputParameters["rho"] * (P_x)  #X-dir
-			loss_2 = u*v_x + v*v_y + w*v_z - InputParameters["Diff"]*(v_xx + v_yy + v_zz) + 1/InputParameters["rho"] * (P_y)  #Y-dir
-			loss_3 = u*w_x + v*w_y + w*w_z - InputParameters["Diff"]*(w_xx + w_yy + w_zz) + 1/InputParameters["rho"] * (P_z)  #z-dir
+			loss_1 = u*u_x + v*u_y + w*u_z - (InputParameters["Diff"]/InputParameters["rho"])*(u_xx + u_yy + u_zz) + 1/InputParameters["rho"] * (P_x)  #X-dir
+			loss_2 = u*v_x + v*v_y + w*v_z - (InputParameters["Diff"]/InputParameters["rho"])*(v_xx + v_yy + v_zz) + 1/InputParameters["rho"] * (P_y)  #Y-dir
+			loss_3 = u*w_x + v*w_y + w*w_z - (InputParameters["Diff"]/InputParameters["rho"])*(w_xx + w_yy + w_zz) + 1/InputParameters["rho"] * (P_z)  #z-dir
 			loss_4 = (u_x + v_y + w_z)   #continuity
 
 		if InputParameters["dim"] == 3 and InputParameters["NumberOfInputs"] == 4:
-			loss_1 = u_T + u*u_x + v*u_y + w*u_z - InputParameters["Diff"]*(u_xx + u_yy + u_zz) + 1/InputParameters["rho"] * (P_x)  #X-dir
-			loss_2 = v_T + u*v_x + v*v_y + w*v_z - InputParameters["Diff"]*(v_xx + v_yy + v_zz) + 1/InputParameters["rho"] * (P_y)  #Y-dir
-			loss_3 = w_T + u*w_x + v*w_y + w*w_z - InputParameters["Diff"]*(w_xx + w_yy + w_zz) + 1/InputParameters["rho"] * (P_z)  #z-dir
+			loss_1 = u_T + u*u_x + v*u_y + w*u_z - (InputParameters["Diff"]/InputParameters["rho"])*(u_xx + u_yy + u_zz) + 1/InputParameters["rho"] * (P_x)  #X-dir
+			loss_2 = v_T + u*v_x + v*v_y + w*v_z - (InputParameters["Diff"]/InputParameters["rho"])*(v_xx + v_yy + v_zz) + 1/InputParameters["rho"] * (P_y)  #Y-dir
+			loss_3 = w_T + u*w_x + v*w_y + w*w_z - (InputParameters["Diff"]/InputParameters["rho"])*(w_xx + w_yy + w_zz) + 1/InputParameters["rho"] * (P_z)  #z-dir
 			loss_4 = (u_x + v_y + w_z) #continuity
 
 		if InputParameters["dim"] == 2:
-			loss_1 = u*u_x + v*u_y - InputParameters["Diff"]*(u_xx + u_yy) + 1/InputParameters["rho"] * (P_x)  #X-dir
-			loss_2 = u*v_x + v*v_y - InputParameters["Diff"]*(v_xx + v_yy) + 1/InputParameters["rho"] * (P_y) #Y-dir
+			loss_1 = u*u_x + v*u_y - (InputParameters["Diff"]/InputParameters["rho"])*(u_xx + u_yy) + 1/InputParameters["rho"] * (P_x)  #X-dir
+			loss_2 = u*v_x + v*v_y - (InputParameters["Diff"]/InputParameters["rho"])*(v_xx + v_yy) + 1/InputParameters["rho"] * (P_y) #Y-dir
 			loss_4 = (u_x + v_y) #continuity
 
 		if InputParameters["dim"] == 2 and InputParameters["NumberOfInputs"] == 3:
-			loss_1 = u_T + u*u_x + v*u_y - InputParameters["Diff"]*(u_xx + u_yy) + 1/InputParameters["rho"] * (P_x)  #X-dir
-			loss_2 = v_T + u*v_x + v*v_y - InputParameters["Diff"]*(v_xx + v_yy) + 1/InputParameters["rho"] * (P_y) #Y-dir
+			loss_1 = u_T + u*u_x + v*u_y - (InputParameters["Diff"]/InputParameters["rho"])*(u_xx + u_yy) + 1/InputParameters["rho"] * (P_x)  #X-dir
+			loss_2 = v_T + u*v_x + v*v_y - (InputParameters["Diff"]/InputParameters["rho"])*(v_xx + v_yy) + 1/InputParameters["rho"] * (P_y) #Y-dir
 			loss_4 = (u_x + v_y) #continuity
 
 		# MSE LOSS
