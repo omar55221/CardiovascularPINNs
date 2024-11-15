@@ -54,37 +54,27 @@ class CardiovascularPINNs():
 		#Read the VTU Files and Directories
 		vtu_files, directories = sort_vtuFiles_WallFolder(self.Args.InputFolder)
 
+		#Skip over the velocity files using the SkipFiles argument
+		vtu_files=vtu_files[::self.Args.SkipFiles]
+		directories=directories[::self.Args.SkipFiles]
+
 		#Define how many vtu files to read
 		self.NumberOfFiles=len(vtu_files) 
 		
-#---------------------------------- I DONT UNDERSTAND THIS -----------------------
-		# Parameters for Time Varying problem
-		sampling_rate = 5                                                   # What is the sampling rate when the network is time varying. For 3D Aorta case it is 5, and for 2D stenosis case it is 35
-		#sampling_rate = 35
-		SampleFileNumber = len(vtu_files)                                   # How many Velocity file do we have for time varying problem
-		TotalSampleOfData = 100                                             # How many file do we have on the whole data. It is 100 for 3D Aorta and 2500 for 2D stenosis
-
-#---------------------------------------------------------------------------------
-
-		############################
 		# Iterate over all files and directories in the folder
 		print("--- Reading the Mesh, Wall, Inlet and Outlet Coordinates")
-		x, y, z, T, xb_wall, yb_wall, zb_wall, T_walls, Sensor_coord_x, Sensor_coord_y, Sensor_coord_z, T_sensors, data_vel_u, data_vel_v, data_vel_w, NumberOfMechCoordinates, MeshCompleteVTU = Read_Input_3D_Data(SampleFileNumber, folder_path_velocity, vtu_files, self.Args.VelocityArrayName, self.Args.NumberOfSensorPoints, sampling_rate, self.NumberOfFiles, self.Args.Period)
-
-		x_data = Sensor_coord_x
-		y_data = Sensor_coord_y
-		z_data = Sensor_coord_z
+		x, y, z, T, xb_wall, yb_wall, zb_wall, T_walls, x_data, y_data, z_data, T_sensors, data_vel_u, data_vel_v, data_vel_w, NumberOfMeshCoordinates, MeshCompleteVTU = Read_Input_3D_Data(self.NumberOfFiles, self.Args.InputFolder, vtu_files, self.Args.VelocityArrayName, self.Args.NumberOfSensorPoints, self.Args.Period)
 
 		# Define boundry Condition
 		print ("--- Defining Boundary Conditions of Zero for the Wall")
-		u_wall_BC = np.linspace(0., 0., len(xb_wall))                                #wall boundry condition in direction u
-		v_wall_BC = np.linspace(0., 0., len(xb_wall))                              #wall boundry condition in direction v
-		w_wall_BC = np.linspace(0., 0., len(xb_wall))                              #wall boundry condition in direction w
+		u_wall_BC = np.linspace(0., 0., len(xb_wall))  #wall boundry condition in direction u. Making it zero.
+		v_wall_BC = np.linspace(0., 0., len(xb_wall))  #wall boundry condition in direction v. Making it zero.
+		w_wall_BC = np.linspace(0., 0., len(xb_wall))  #wall boundry condition in direction w. Making it zero.
 		
 		#Define vectors for velocity
-		u_wall_BC = u_wall_BC.reshape(-1, 1) #need to reshape to get 2D array
-		v_wall_BC = v_wall_BC.reshape(-1, 1) #need to reshape to get 2D array
-		w_wall_BC = w_wall_BC.reshape(-1, 1) #need to reshape to get 2D array
+		u_wall_BC = u_wall_BC.reshape(-1, 1) #need to reshape to get 1D column
+		v_wall_BC = v_wall_BC.reshape(-1, 1) #need to reshape to get 1D column
+		w_wall_BC = w_wall_BC.reshape(-1, 1) #need to reshape to get 1D column
 
 		#Print out the shape of the velocity field 
 		print('--- Shape of coordinates in the wall boundry: x{} y{} z{}'.format(xb_wall.shape, yb_wall.shape, zb_wall.shape))
@@ -92,12 +82,12 @@ class CardiovascularPINNs():
 
 
 		#Output the loss function in excel format	
-		if not os.path.isfile(path_NetWeights+"loss.xlsx"):
-		    headers= ['Loss_eqn', 'Loss_BC', 'Loss_Data', 'Loss_total', 'Time']
+		if not os.path.isfile(self.Args.OutputFolder+"/loss.xlsx"):
+		    headers= ['Loss_eqn', 'Loss_BC', 'Loss_Data', 'Loss_total', 'Time', 'DynamicCoeffBC', 'DynamicCoeffData']
 		    workbook_name = os.path.join(self.Args.OutputFolder,"loss.xlsx")
 		    wb = Workbook()
 		    page = wb.active
-		    page.title = 'Siren-Based-3Daorta'
+		    page.title = "Project_%s"%self.ActivationFunction #'Siren-Based-3Daorta'
 		    page.append(headers) # write the headers to the first line
 		    wb.save(filename=workbook_name)
 
@@ -111,8 +101,8 @@ class CardiovascularPINNs():
 
 		InputParameters={"device":              self.device,
 		            "processor":                self.processor,
-		            "dim":                      self.Args.Dimension,
-		            "NumberOfMechCoordinates":  NumberOfMechCoordinates,              # How many MechCoordinates do we have
+		            "dim":                      self.Args.Dimension,                  #Dimension of the geometry
+		            "NumberOfMechCoordinates":  NumberOfMeshCoordinates,              # How many MeshCoordinates do we have
 		            "NumberOfInputs":           self.NumberOfInputs,                  # How many inputs do we have for neural network x , y, z ,T
 		            "MeshCompleteVTU":          MeshCompleteVTU,                      #Mesh volume file
 		            "xyz":                      [x, y, z],                            #Mesh Coordinates
@@ -122,11 +112,11 @@ class CardiovascularPINNs():
 		            "data_vel":                 [data_vel_u, data_vel_v, data_vel_w], #Sensor Velocities
 		            "batchsize":                self.Args.BatchSize,                  #Batch Size, the number of data to show the network in a single iteration
 		            "learning_rate":            self.Args.LearningRate,               #learning rate of the network
-		            "decay_rate":               self.Args.DecayRate,                  #decay rate of the network
+		            "decay_rate":               self.Args.DecayRate,                  #learning decay rate of the network
 		            "epoches":                  self.Args.NumberOfEpoches,            #number of epoches
 		            "step_epoches":             self.Args.StepEpoches,                #the epoches at which to decrease the learning rate
 		            "Flag_schedule":            self.Args.DynamicLearningRate,        #Whether to use decreased learning rate or constant
-		            "Diff":                     self.Args.Viscosity,                  #Differene to compute the learning rate
+		            "Diff":                     self.Args.Viscosity,                  #Dynamic viscosity of fluid.
 		            "rho":                      self.Args.Density,                    #The density of the fluid
 		            "Lambda":                   self.Args.Lambda,                     #Coefficent factor of boundary condition in the loss function
 		            "Path_NetWeights":          self.Args.OutputFolder,               #Path for saving the weights
@@ -134,13 +124,13 @@ class CardiovascularPINNs():
 		            "NumberOfLayers":           self.Args.NumberOfLayers,             # Number of layers
 		            "NumberOfHiddenNeurons":    self.Args.NumberOfNeurons,            # Number of Neurons in each layer
 		            "W0_Siren":                 self.Args.Omega0,                     # W0 hyperparameter of Siren
-		            "Time":                     T,                                    # Time of the model
-		            "Time_walls":               T_walls,                              # Time of the model with the shape of walls inputs
-		            "Time_data":                T_sensors,                            # Time of the model with the shape of sensor data inputs
-		            "sampling_rate":            sampling_rate,                        # What is Sampling rate?
-		            "NumberOfSampleFiles":      SampleFileNumber,                     # How many sample file do we have
+		            "Time":                     T,                                    # Time for each of the mesh coordinate 
+		            "Time_walls":               T_walls,                              # Time for each of the wall coordinates 
+		            "Time_data":                T_sensors,                            # Time for each of the data coordinate
+		            "sampling_rate":            1,                                    # What is Sampling rate?
+		            "NumberOfSampleFiles":      self.NumberOfFiles,                   # How many sample file do we have
 		            "shuffle":                  self.Args.Shuffle,                    # Input data should be shuffled or not?
-		            "input_files":              folder_path_velocity,                 # Input data address
+		            "input_files":              self.NumberOfFiles,                   # Input data address
 		            "vtu_files":                vtu_files
 		            }
 
@@ -155,6 +145,9 @@ if __name__=="__main__":
                         
         #Input filename of the perfusion map
 	parser.add_argument('-InputFolder', '--InputFolder', type=str, required=True, dest="InputFolder",help="The folder containing the velocity files and wall nodes.")
+	
+
+	parser.add_argument('-SkipFiles', '--SkipFiles', type=int, required=False, default=1, dest="SkipFiles",help="Assign the increment to skip for the total number of velocity files.")
 	
 	parser.add_argument('-VelocityArrayName', '--VelocityArrayName', type=str, required=False,default="velocity", dest="ArrayName",help="Name for the velocity array in the data files.")
 	
@@ -181,9 +174,9 @@ if __name__=="__main__":
 	
 	parser.add_argument('-Lambda', '-Lambda', type=float, required=False, default=0.9, dest="Lambda", help="Assign smoothing factor for moving average on Lambda_bc and Lambda_data in the loss function. Default is 0.9.")
 	
-	parser.add_argument('-Viscosity', '-Viscosity', type=float, required=False, default=0.04, dest="Viscosity", help="Assign the viscosity of blood. Default is 0.04 poise. Use 0.000452638 for sample data in github repository.")
+	parser.add_argument('-Viscosity', '-Viscosity', type=float, required=False, default=0.000452638, dest="Viscosity", help="Assign the dynamic viscosity of blood. Default is 0.04 poise. Use 0.000452638 for sample data in github repository.")
 	
-	parser.add_argument('-Density', '-Density', type=float, required=False, default=1.06, dest="Density", help="Assign the density of blood. Default is 1.06 g/cm3. Use 1.0 for sample data in github repository.")
+	parser.add_argument('-Density', '-Density', type=float, required=False, default=1.0, dest="Density", help="Assign the density of blood. Default is 1.06 g/cm3. Use 1.0 for sample data in github repository.")
 	
 	parser.add_argument('-DynamicLearningRate', '-DynamicLearningRate', type=int, required=False, default=1, dest="DynamicLearningRate", help="Assign whether to use constant or dynamic learning rate. Default is 1. [1=Dynamic Learning Rate, 0=Constant Learning Rate].")
 	

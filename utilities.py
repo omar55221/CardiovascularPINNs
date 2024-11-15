@@ -353,7 +353,7 @@ def exists(val):
 def cast_tuple(val, repeat = 1):
     return val if isinstance(val, tuple) else ((val,) * repeat)
 
-def SaveVTU_TimeVarying(output_pinns, Model_dim, SampleNum_InTime, sampling_rate, path, epoch, input_files, vtu_files):
+def SaveVTU_TimeVarying(output_pinns, Model_dim, SampleNum_InTime, path, epoch, input_files, vtu_files):
 	output_u = output_pinns[:, 0]
 	output_v = output_pinns[:, 1]
 	if Model_dim == 3: output_w = output_pinns[:, 2]
@@ -427,6 +427,7 @@ def SaveVTU_SteadyModel(output_pinns, Model_dim, MeshCompleteVTU, path, epoch):
 def sort_vtuFiles_WallFolder(folder_path_velocity):
 	vtu_files = []
 	directories = []
+	
 	for item in os.listdir(folder_path_velocity):
 		item_path = os.path.join(folder_path_velocity, item)
 		if os.path.isfile(item_path) and item.endswith('.vtu'):
@@ -436,30 +437,30 @@ def sort_vtuFiles_WallFolder(folder_path_velocity):
 	return sorted(vtu_files), sorted(directories)
 
 
-def Read_Input_3D_Data(SampleFileNumber, folder_path_velocity, vtu_files, NameOfVelocityField, sensor_num, sampling_rate, TotalSampleOfData, TimeOfSampling):
+def Read_Input_3D_Data(SampleFileNumber, folder_path_velocity, vtu_files, NameOfVelocityField, sensor_num, TimeOfSampling):
 	for i in range(SampleFileNumber):    # how many file do we have? now 20
 		if i == 0:
 			VolumeCoords, BoundaryWallCoords, BoundaryInletCoords, BoundaryOutletCoords, MeshCompleteVTU = ReadMeshComplete(folder_path_velocity).Main(vtu_files[i])
 			x, y, z = coord_to_xyz(VolumeCoords) # Preparing the mesh coordinates as x, y ,z
 			NumberOfMechCoordinates = len(x)
 			T = np.ones(shape=x.shape)
-			T = T * ((i*sampling_rate/TotalSampleOfData)*TimeOfSampling)
+			T = T * (TimeOfSampling/SampleFileNumber * i)
 			# rename the wall vtp file to wall.vtp and put it in Results_SimVascular_Coarse/mesh-surfaces
 			xb_wall, yb_wall, zb_wall = coord_to_xyz(BoundaryWallCoords["wall.vtp"]) # Preparing the wall coordinates as xb_wall, yb_wall ,zb_wall
 			T_walls = np.ones(shape=xb_wall.shape)
-			T_walls = T_walls * ((i*sampling_rate/TotalSampleOfData)*TimeOfSampling)
+			T_walls = T_walls * (TimeOfSampling/SampleFileNumber * i)
 			SensorCoords = np.linspace(len(xb_wall), len(x)-1, num=sensor_num, dtype=int)
 			x_data = x[SensorCoords]
 			y_data = y[SensorCoords]
 			z_data = z[SensorCoords]
 			Sensor_coord_x, Sensor_coord_y, Sensor_coord_z, data_vel_u, data_vel_v, data_vel_w = ExtractVelocitySensorDataFromVTU_3D(x_data, y_data, z_data, GrandTruthVTUpath=folder_path_velocity+"/"+vtu_files[i], NameOfVelocityField=NameOfVelocityField)
 			T_sensors = np.ones(shape=Sensor_coord_x.shape)
-			T_sensors = T_sensors * ((i*sampling_rate/TotalSampleOfData)*TimeOfSampling)
+			T_sensors = T_sensors * (TimeOfSampling/SampleFileNumber * i)
 		else:
 			VolumeCoords, BoundaryWallCoords, BoundaryInletCoords, BoundaryOutletCoords, MeshCompleteVTU = ReadMeshComplete(folder_path_velocity).Main(vtu_files[i])
 			x_nextT, y_nextT, z_nextT = coord_to_xyz(VolumeCoords)
 			T_nextT = np.ones(shape=x_nextT.shape)
-			T_nextT = T_nextT * ((i*sampling_rate/TotalSampleOfData)*TimeOfSampling)
+			T_nextT = T_nextT * (TimeOfSampling/SampleFileNumber * i)
 			x = np.concatenate((x, x_nextT), axis=0)
 			y = np.concatenate((y, y_nextT), axis=0)
 			z = np.concatenate((z, z_nextT), axis=0)
@@ -468,13 +469,14 @@ def Read_Input_3D_Data(SampleFileNumber, folder_path_velocity, vtu_files, NameOf
 			xb_wallnext, yb_wallnext, zb_wallnext = coord_to_xyz(BoundaryWallCoords["wall.vtp"])  # Preparing the wall coordinates as xb_wall, yb_wall ,zb_wall
 			xb_wall = np.concatenate((xb_wall, xb_wallnext), axis=0); yb_wall = np.concatenate((yb_wall, yb_wallnext), axis=0); zb_wall = np.concatenate((zb_wall, zb_wallnext), axis=0)
 			T_wallsnext = np.ones(shape=xb_wallnext.shape)
-			T_wallsnext = T_wallsnext * ((i*sampling_rate/TotalSampleOfData)*TimeOfSampling); T_walls = np.concatenate((T_walls, T_wallsnext), axis=0)
+			T_wallsnext = T_wallsnext * (TimeOfSampling/SampleFileNumber * i); 
+			T_walls = np.concatenate((T_walls, T_wallsnext), axis=0)
 			# sensor data
 			Sensor_coord_nextx, Sensor_coord_nexty, Sensor_coord_nextz, data_vel_nextu, data_vel_nextv, data_vel_nextw = ExtractVelocitySensorDataFromVTU_3D(x_data, y_data, z_data, GrandTruthVTUpath=folder_path_velocity+"/"+vtu_files[i], NameOfVelocityField=NameOfVelocityField)
 			Sensor_coord_x = np.concatenate((Sensor_coord_x, Sensor_coord_nextx), axis=0); Sensor_coord_y = np.concatenate((Sensor_coord_y, Sensor_coord_nexty), axis=0); Sensor_coord_z = np.concatenate((Sensor_coord_z, Sensor_coord_nextz), axis=0)
 			data_vel_u = np.concatenate((data_vel_u, data_vel_nextu), axis=0); data_vel_v = np.concatenate((data_vel_v, data_vel_nextv), axis=0); data_vel_w = np.concatenate((data_vel_w, data_vel_nextw), axis=0)
 			T_sensorsnext = np.ones(shape=Sensor_coord_nextx.shape)
-			T_sensorsnext = T_sensorsnext * ((i*sampling_rate/TotalSampleOfData)*TimeOfSampling)
+			T_sensorsnext = T_sensorsnext * (TimeOfSampling/SampleFileNumber * i)
 			T_sensors = np.concatenate((T_sensors, T_sensorsnext), axis=0)
 	return x, y, z, T, xb_wall, yb_wall, zb_wall, T_walls, Sensor_coord_x, Sensor_coord_y, Sensor_coord_z, T_sensors, data_vel_u, data_vel_v, data_vel_w, NumberOfMechCoordinates, MeshCompleteVTU
 
@@ -503,30 +505,31 @@ def Prepare_2D_stenosis_Data(folder_path_velocity, vtu_files, sensor_num, NameOf
 			x, y = coord_to_xy(VolumeCoords)
 			NumberOfMechCoordinates = len(x)
 			T = np.ones(shape=x.shape)
-			T = T * ((i*sampling_rate/TotalSampleOfData)*TimeOfSampling)
+			T = T * (TimeOfSampling/SampleFileNumber * i)
 			# sensor data
 			# Sensor_coord_x, Sensor_coord_y, data_vel_u, data_vel_v = ExtractVelocitySensorDataFromVTU(x_data, y_data, z_data, GrandTruthVTUpath = 'MeshFolder_timevarying/'+"velocity_%d"%(i*sampling_rate)+'.vtu', NameOfVelocityField = 'Assigned Vector Function')
 			Sensor_coord_x, Sensor_coord_y, data_vel_u, data_vel_v = ExtractVelocitySensorDataFromVTU(x_data, y_data, z_data, GrandTruthVTUpath = folder_path_velocity+'/'+vtu_files[i], NameOfVelocityField = NameOfVelocityField)
 			T_sensors = np.ones(shape=Sensor_coord_x.shape)
-			T_sensors = T_sensors * ((i*sampling_rate/TotalSampleOfData)*TimeOfSampling)
+			T_sensors = T_sensors * (TimeOfSampling/SampleFileNumber * i)
 			# walls
-			xb_wall, yb_wall = ReadVTKFile(folder_path_velocity+'/mesh-surfaces'+'/Walls.vtk')
+			xb_wall, yb_wall = ReadVTKFile(folder_path_velocity+'/WallMesh'+'/Walls.vtk')
 			T_walls = np.ones(shape=xb_wall.shape)
-			T_walls = T_walls * ((i*sampling_rate/TotalSampleOfData)*TimeOfSampling)
+			T_walls = T_walls * (TimeOfSampling/SampleFileNumber * i)
 		else:
 			VolumeCoords, BoundaryWallCoords, BoundaryInletCoords, BoundaryOutletCoords, MeshCompleteVTU = ReadMeshComplete(folder_path_velocity).Main(vtu_files[i])
 			x_nextT, y_nextT = coord_to_xy(VolumeCoords)
 			T_nextT = np.ones(shape=x_nextT.shape)
-			T_nextT = T_nextT * ((i*sampling_rate/TotalSampleOfData)*TimeOfSampling)
+			T_nextT = T_nextT * (TimeOfSampling/SampleFileNumber * i)
 			x = np.concatenate((x, x_nextT), axis=0)
 			y = np.concatenate((y, y_nextT), axis=0)
 			T = np.concatenate((T, T_nextT), axis=0)
 
 			# walls
-			xb_wallnext, yb_wallnext = ReadVTKFile(folder_path_velocity+'/mesh-surfaces'+'/Walls.vtk')
+			xb_wallnext, yb_wallnext = ReadVTKFile(folder_path_velocity+'/WallMesh'+'/Walls.vtk')
 			xb_wall = np.concatenate((xb_wall, xb_wallnext), axis=0); yb_wall = np.concatenate((yb_wall, yb_wallnext), axis=0)
 			T_wallsnext = np.ones(shape=xb_wallnext.shape)
-			T_wallsnext = T_wallsnext * ((i*sampling_rate/TotalSampleOfData)*TimeOfSampling); T_walls = np.concatenate((T_walls, T_wallsnext), axis=0)
+			T_wallsnext = T_wallsnext * (TimeOfSampling/SampleFileNumber * i); 
+			T_walls = np.concatenate((T_walls, T_wallsnext), axis=0)
 			# sensor data
 			Sensor_coord_nextx, Sensor_coord_nexty, data_vel_nextu, data_vel_nextv = ExtractVelocitySensorDataFromVTU(x_data, y_data, z_data, GrandTruthVTUpath = folder_path_velocity+'/'+vtu_files[i], NameOfVelocityField = NameOfVelocityField)
 			Sensor_coord_x = np.concatenate((Sensor_coord_x, Sensor_coord_nextx), axis=0)
@@ -534,7 +537,7 @@ def Prepare_2D_stenosis_Data(folder_path_velocity, vtu_files, sensor_num, NameOf
 			data_vel_u = np.concatenate((data_vel_u, data_vel_nextu), axis=0)
 			data_vel_v = np.concatenate((data_vel_v, data_vel_nextv), axis=0)
 			T_sensorsnext = np.ones(shape=Sensor_coord_nextx.shape)
-			T_sensorsnext = T_sensorsnext * ((i*sampling_rate/TotalSampleOfData)*TimeOfSampling)
+			T_sensorsnext = T_sensorsnext * (TimeOfSampling/SampleFileNumber * i)
 			T_sensors = np.concatenate((T_sensors, T_sensorsnext), axis=0)
 	Sensor_coord_z = np.zeros(shape=Sensor_coord_x.shape)
 
