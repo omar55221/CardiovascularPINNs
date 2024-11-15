@@ -8,7 +8,7 @@ class ReadMeshComplete():
 		self.MeshFolder=MeshFolder
 
 	def Main(self, velocity_file_path = "Velocity_Re2000.vtu"):
-		BoundaryFileNames=glob(self.MeshFolder+"/mesh-surfaces/*.vtp")
+		BoundaryFileNames=glob(self.MeshFolder+"/WallMesh/*.vtp")
 
 
 		#Create a dictionary to store the surface coordinates

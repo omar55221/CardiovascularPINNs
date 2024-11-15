@@ -326,7 +326,7 @@ def geo_train(InputParameters):
 				if InputParameters["NumberOfInputs"] > InputParameters["dim"]:
 					for i in range(InputParameters['NumberOfSampleFiles']):
 						outneti = net2(net_in[i:(i+1)*InputParameters['NumberOfMechCoordinates'], :])
-						SaveVTU_TimeVarying(outneti, InputParameters["dim"], i, InputParameters["sampling_rate"], InputParameters["Path_NetWeights"], epoch, InputParameters["input_files"], InputParameters["vtu_files"])
+						SaveVTU_TimeVarying(outneti, InputParameters["dim"], i, InputParameters["Path_NetWeights"], epoch, InputParameters["input_files"], InputParameters["vtu_files"])
 				else:   # Model is steady not time varying
 					outneti = net2(net_in)
 					SaveVTU_SteadyModel(outneti, InputParameters["dim"], InputParameters["MeshCompleteVTU"], InputParameters["Path_NetWeights"], epoch)
