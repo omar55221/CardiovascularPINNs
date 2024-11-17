@@ -23,7 +23,8 @@ We have provided sample data in the the subfolder Velocity3DData that contains v
 
 You will also need to store wall boundaries in vtkPolyData format (i.e., .vtp surface files), which will be used to prescribe zero-velocity on the mesh wall. We have added a subfolder in Velocity3DData/WallMesh/wall.vtp. If you are using SimVascular, you can easily obtain this file from the mesh-complete folder (e.g., mesh-complete/mesh-surfaces/walls.vtp)
 
-## Step2. Run Car
+## Step2. Run CardiovascularPINNs to inversely obtained blood flow data.
+
 
 ### main.py
 This file is the main code. All the hyperparameters are in this file, including the input data paths.
