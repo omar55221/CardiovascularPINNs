@@ -16,15 +16,20 @@ foo@bar:~$ python [ScriptName.py] -h
 ```
 
 # Steps to use the CardiovascularPINNs framework
-## Step 1. Preparing Training Data
+## Step 1. Preparing Training Data and Input Points
 You will need a folder that contains the CFD simulation or experimental data (i.e., velocity and pressures). The data needs to be in vtkXMLUnstructured format (i.e., .vtu file format). You can use SimVascular to run CFD simulations to obtain your own "ground-truth" CFD data that can seamlessly be used with this framework. 
 
 We have provided sample data in the the subfolder Velocity3DData that contains velocity and pressure data obtained from CFD simulations. The CFD simulations were run for 4 cycles with 10,000 timesteps per cardiac cycle. The data from the last cardiac cycle was projected onto a coarser mesh of approximately 240,000 tetrahedral cells. 
 
-You will also need to store wall boundaries in vtkPolyData format (i.e., .vtp surface files), which will be used to prescribe zero-velocity on the mesh wall. We have added a subfolder in Velocity3DData/WallMesh/wall.vtp. If you are using SimVascular, you can easily obtain this file from the mesh-complete folder (e.g., mesh-complete/mesh-surfaces/walls.vtp)
+You will also need to store wall boundaries in vtkPolyData format (i.e., .vtp surface files), which will be used to prescribe zero-velocity on the mesh wall. We have added a subfolder in VelocityData3D/WallMesh/wall.vtp. If you are using SimVascular, you can easily obtain this file from the mesh-complete folder (e.g., mesh-complete/mesh-surfaces/walls.vtp)
 
 ## Step2. Run CardiovascularPINNs to inversely obtained blood flow data.
-
+To run the framework, you need to run the following command:
+```console
+foo@bar:~$ python main.py -InputFolder [/path/to/VelocityData3D]
+```
+There are several optional arguments:
+-```-VelocityArrayName```: Name of the velocity array in the velocity data file. Default is ```velocity```.
 
 ### main.py
 This file is the main code. All the hyperparameters are in this file, including the input data paths.
