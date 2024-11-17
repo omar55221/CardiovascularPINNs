@@ -1,4 +1,8 @@
-CardiovascularPINNs can be used to inversely train a neural network to solve blood flow simulation problems. You will need the following pre-requisite libraries to use the framework: 
+CardiovascularPINNs can be used to inversely train a neural network to simulate blood flow in vascular models. For more details about this framework, please refer to the following papers:
+
+[Aghaee A. and Khan MO., "Performance of Fourier-based Activation Function in Physics-Informed Neural Netoworks for Patient-specific Cardiovascular Flows", Computer Methods and Programs in Biomedicine, 2024.](https://scholar.google.ca/citations?view_op=view_citation&hl=en&user=KAfm-70AAAAJ&sortby=pubdate&citation_for_view=KAfm-70AAAAJ:ZeXyd9-uunAC) 
+
+You will need the following pre-requisite libraries to use the framework: 
 1. vtk
 2. pytorch
 3. numpy
@@ -11,18 +15,15 @@ To get help for any script, please type:
 foo@bar:~$ python [ScriptName.py] -h
 ```
 
-# Physics-Informed Neural Networks (PINNs) for Patient-Specific Cardiovascular Flows
-## Introduction
-Physics-Informed Neural Networks (PINNs) are a novel approach in the field of machine learning that integrate physical laws into the training process of neural networks. This integration is achieved by incorporating differential equations that govern physical processes directly into the loss function used to train the network. As a result, PINNs are capable of learning and making predictions that are consistent with known physical principles. This makes them particularly valuable for solving complex scientific and engineering problems where traditional data-driven models might struggle due to the scarcity of training data or the complexity of the underlying physical processes. By leveraging the structure and constraints provided by physical theories, PINNs can efficiently predict outcomes, simulate processes, and even discover new insights within fields such as fluid dynamics, material science, and climate modeling, among others.
-Here, we coded a PINNs framework that uses Navier-Stroke equation, some known data points, and a boundary condition to simulate blood flow through 2D and 3D geometries. The architecture can be shown as:
-![Figure_Methods_0](https://github.com/Owais-Khan/CardiovascularPINNs/assets/79001778/aaf9659c-991c-4fbc-a2dc-2b984ca70242)
-
 # Steps to use the CardiovascularPINNs framework
 ## Step 1. Preparing Training Data
-You will need a folder that contains the CFD simulation or experimental data (i.e., velocity and pressures). Currently, the volumetric velocity and pressure has to be in VTK format as vtkXMLUnstructured data (i.e., .vtu file format). 
+You will need a folder that contains the CFD simulation or experimental data (i.e., velocity and pressures). The data needs to be in vtkXMLUnstructured format (i.e., .vtu file format). You can use SimVascular to run CFD simulations to obtain your own "ground-truth" CFD data that can seamlessly be used with this framework. 
 
-Within the folder, you also need to specific the location of wall nodes to assign "zero-velocity" at the wall mesh points. This has to be a vtk file in vtkPolyData format (i.e., .vtp). A typical folder will look like this: [INSERT TREE STRUCTURE FOR mesh-surface folder]
- 
+We have provided sample data in the the subfolder Velocity3DData that contains velocity and pressure data obtained from CFD simulations. The CFD simulations were run for 4 cycles with 10,000 timesteps per cardiac cycle. The data from the last cardiac cycle was projected onto a coarser mesh of approximately 240,000 tetrahedral cells. 
+
+You will also need to store wall boundaries in vtkPolyData format (i.e., .vtp surface files), which will be used to prescribe zero-velocity on the mesh wall. We have added a subfolder in Velocity3DData/WallMesh/wall.vtp. If you are using SimVascular, you can easily obtain this file from the mesh-complete folder (e.g., mesh-complete/mesh-surfaces/walls.vtp)
+
+## Step2. Run Car
 
 ### main.py
 This file is the main code. All the hyperparameters are in this file, including the input data paths.
