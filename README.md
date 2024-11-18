@@ -12,7 +12,7 @@ You will need the following pre-requisite libraries to use the framework:
 
 We have provided a sample dataset here; however, more comprehensive set of data is available elsewhere [provide reference to Kaggle]. The public dataset consists of an aortic models with synthetically-induced stenosis, raning in severity from 0-70% in increments of 5% (see Figure below).
 
-
+![alt text](https://github.com/Owais-Khan/CardiovascularPINNs/blob/main/Figures/Figure1_Stenosis_Mapping.png)
 
 # Steps to use the CardiovascularPINNs framework
 ## Step 1. Preparing Training Data and Input Points
