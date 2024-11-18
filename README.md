@@ -12,7 +12,7 @@ You will need the following pre-requisite libraries to use the framework:
 5. openpyxl
 6. itertools
 
-We have provided a sample CFD dataset in this github repository; however, a more comprehensive dataset is available publically [elsewhere] (https://www.kaggle.com/datasets/khanmu11/aortapinnsdata/data?select=Aorta_100_coarse). This public dataset consists of an aortic models with synthetically-induced stenosis, raning in severity from 0-70% in increments of 5\% (see Figure below). The CFD simulations were performed using SimVascular (7 million elements, 10,000 timesteps) and projected onto a coarser mesh of approximately 340,000 elements. This framework is fully compatible with these datasets and should work out-of-the-box.  
+We have provided a sample CFD dataset in this github repository; however, a more comprehensive dataset is available publically [elsewhere](https://www.kaggle.com/datasets/khanmu11/aortapinnsdata/data?select=Aorta_100_coarse). This public dataset consists of an aortic models with synthetically-induced stenosis, raning in severity from 0-70% in increments of 5\% (see Figure below). The CFD simulations were performed using SimVascular (7 million elements, 10,000 timesteps) and projected onto a coarser mesh of approximately 340,000 elements. This framework is fully compatible with these datasets and should work out-of-the-box.  
 
 ![alt text](https://github.com/Owais-Khan/CardiovascularPINNs/blob/main/Figures/Figure1_Stenosis_Mapping.png)
 
