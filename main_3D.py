@@ -152,6 +152,8 @@ if __name__=="__main__":
 
 	parser.add_argument('-SkipFiles', '--SkipFiles', type=int, required=False, default=1, dest="SkipFiles",help="Assign the increment to skip for the total number of velocity files.")
 	
+	parser.add_argument('-SaveAfter', '--SaveAfter', type=int, required=False, default=100, dest="SaveAfter",help="Assign after which epoch to start saving the results.")
+	
 	parser.add_argument('-VelocityArrayName', '--VelocityArrayName', type=str, required=False, default="velocity", dest="VelocityArrayName",help="Name for the velocity array in the data files.")
 	
 	parser.add_argument('-Period', '-Period', type=float, required=False, default=1.0, dest="Period", help="Assign the period of the cardiac cycle. Default is 1.0.")

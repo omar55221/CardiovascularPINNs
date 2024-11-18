@@ -448,7 +448,7 @@ def geo_train(InputParameters):
 		print('*****Total avg Loss : Loss eqn {:.10f} Loss BC {:.10f} Loss data {:.10f} ****'.format(loss_eqn_tot, loss_bc_tot, loss_data_tot) )
 		print('learning rate is ', optimizer_Siren.param_groups[0]['lr'])
 
-		if _num_inloss % 10 == 0 and _num_inloss > 95:
+		if _num_inloss % 10 == 0 and _num_inloss > InputParameters["SaveAfter"]:
 				if InputParameters["dim"] == 2 and InputParameters["NumberOfInputs"] == 2: net_in = torch.cat((x.requires_grad_(), y.requires_grad_()),1)
 				if InputParameters["dim"] == 2 and InputParameters["NumberOfInputs"] == 3: net_in = torch.cat((x.requires_grad_(), y.requires_grad_(), T.requires_grad_()), 1)
 				if InputParameters["dim"] == 3 and InputParameters["NumberOfInputs"] == 3: net_in = torch.cat((x.requires_grad_(), y.requires_grad_(), z.requires_grad_()), 1)
