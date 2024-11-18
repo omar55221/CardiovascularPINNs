@@ -10,10 +10,9 @@ You will need the following pre-requisite libraries to use the framework:
 5. openpyxl
 6. itertools
 
-To get help for any script, please type:
-```console
-foo@bar:~$ python [ScriptName.py] -h
-```
+We have provided a sample dataset here; however, more comprehensive set of data is available elsewhere [provide reference to Kaggle]. The public dataset consists of an aortic models with synthetically-induced stenosis, raning in severity from 0-70% in increments of 5% (see Figure below).
+
+
 
 # Steps to use the CardiovascularPINNs framework
 ## Step 1. Preparing Training Data and Input Points
