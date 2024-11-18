@@ -183,9 +183,6 @@ if __name__=="__main__":
 	
 	parser.add_argument('-Lambda', '-Lambda', type=float, required=False, default=0.9, dest="Lambda", help="Assign smoothing factor for moving average on Lambda_bc and Lambda_data in the loss function. Default is 0.9.")
 	
-	parser.add_argument('-Viscosity', '-Viscosity', type=float, required=False, default=0.04, dest="Viscosity", help="Assign the dynamic viscosity of blood. Default is 0.04 poise. Use 0.000452638 for sample data in github repository.")
-	
-	parser.add_argument('-Density', '-Density', type=float, required=False, default=1.06, dest="Density", help="Assign the density of blood. Default is 1.06 g/cm3. Use 1.0 for sample data in github repository.")
 	
 	parser.add_argument('-DynamicLearningRate', '-DynamicLearningRate', type=int, required=False, default=1, dest="DynamicLearningRate", help="Assign whether to use constant or dynamic learning rate. Default is 1. [1=Dynamic Learning Rate, 0=Constant Learning Rate].")
 	

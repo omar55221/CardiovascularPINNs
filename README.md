@@ -46,18 +46,6 @@ Optional argumens are provided below:
 | TimeVarying                 | int   | Assign whether the problem is steady-state [=0] of time-varying [=1] | 1 |
 | ActivationFunction          | str   | Assign the activation function: tanh, swish, sinus or sinusResNet. | tanh |
 | NumberOfSensorPoints        | int   | Assign the number of sensor data points to sample from velocity data files. | 800 |
-| NumberOfLayers              | int   | Assign the number of layers for the neural network. | 4 |
-| NumberOfNeurons             | int   | Assign the number of neurons per layer. | 128 |
-| Omega0                      | int   | Only specified for the sinus activation and sinusResNet model. Assign frequency for first layer. | 25 |
-| BatchSize                   | int   | Assign the batch size | 512 |
-| Shuffle                     | int   | Assign if the input data needs to be shuffled [=1] or remain unshuffled [0] | 1 | 
-| Lambda                      | float | Assign smoothing factor for moving average on Lambda_bc and Lambda_data in the loss function. | 0.9 |
-| DynamicLearningRate         | int   | Assign whether to use dynamic [=1] or constant [=0] learning rate for loss function. | 1 |
-| LearningRate                | float | Assign the learning rate for the training process. | 0.001 |
-| NumberOfEpoches             | int   | Assign the number of epoches to run the training process. | 400 |
-| StepEpoches                 | int   | Assign after how many epoches you want to change the learning rate. | 70 |
-| DecayRate                   | float | Assign the decay rate (i.e., learning rate multiplies by this number after StepEpoches. | 0.1 |
-| OutputFolder                | str   | Assign the name of the output folder. By default, it will be one folder up from the velocity data folder.| 0 |
 
 
 ### main.py
