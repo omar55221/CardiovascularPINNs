@@ -59,25 +59,33 @@ Optional argumens are provided below:
 | DecayRate                   | float | Assign the decay rate (i.e., learning rate multiplies by this number after StepEpoches. | 0.1 |
 | OutputFolder                | str   | Assign the name of the output folder. By default, it will be one folder up from the velocity data folder.| 0 |
 
+--- 
+## File Description
 
 ### main.py
-This file is the main code. All the hyperparameters are in this file, including the input data paths.
+This file is the main file that specifies all of the parameters. All the hyperparameters are in this file, including the input data paths.
+
 ### train.py
 This file contains the training process function.
+
 ### utilities.py
-This file contains several functions we defined to be used during the training process.
+The is file contains commonly used functions, such as those related to I/O.
+
 ### ReadMeshComplete.py
-This file contains the function for reading the Mesh files.
+This file contains the function to read the Mesh files.
+
 ### SirenNN.py - TanhNN.py - SwishNN.py
 These files contain feed-forward neural networks with different activation functions.
+
 ### SirenResNetNN.py
 This file contains the coding for feed-forward neural networks with sinusoidal activation functions and skip connections.
 
 ## JobScript.sh
-This file submits a job for running the code on Mist (Compute Canada)
+This file submits a job for running the code on the compute cluster. The script is defined for the MIST cluster at the SciNet HPC Consortium.
 
-## MeshFolder2D
+## VelocityData2D
 This folder contains the 2D stenosis case data
 
-## Results_SimVascular_Coarse
-This folder contains the 3D stenosis case data
+## VelocityData3D
+This folder contains velocity field in a 3D aortic geometry obtained from CFD simulations run with SimVascular. The simulatations were run at ~7 million tetrahedral elements with 10,000 timesteps per cardiac cycle, and subsequently projected to a coarse mesh. 
+
