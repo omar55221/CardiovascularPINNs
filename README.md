@@ -32,7 +32,7 @@ Optional argumens are provided below:
 
 | Argument | Type | Description | Default |
 | ---      | ---  |  ---        | ---     |
-  
+| VelocityArrayName | str | Assign the name of velocity array in velocity data files | velocity |  
 
 ### main.py
 This file is the main code. All the hyperparameters are in this file, including the input data paths.
