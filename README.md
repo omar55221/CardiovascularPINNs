@@ -12,24 +12,22 @@ You will need the following pre-requisite libraries to use the framework:
 5. openpyxl
 6. itertools
 
-We have provided a sample CFD dataset in this github repository; however, a more comprehensive dataset is available publically [elsewhere](https://www.kaggle.com/datasets/khanmu11/aortapinnsdata/data?select=Aorta_100_coarse). This public dataset consists of an aortic models with synthetically-induced stenosis, raning in severity from 0-70% in increments of 5\% (see Figure below). The CFD simulations were performed using SimVascular (7 million elements, 10,000 timesteps) and projected onto a coarser mesh of approximately 340,000 elements. This framework is fully compatible with these datasets and should work out-of-the-box.  
+We have provided a sample CFD dataset in this github repository; however, a more comprehensive dataset is available publically [elsewhere](https://www.kaggle.com/datasets/khanmu11/aortapinnsdata/data?select=Aorta_100_coarse). This public dataset consists of an aortic models with synthetically-induced stenosis, raning in severity from 0-70% in increments of 5\% (see Figure below). The CFD simulations were performed using SimVascular (7 million elements, 10,000 timesteps) and projected onto a coarser mesh of approximately 340,000 elements. CardiovascularPINNs framework is fully compatible with the dataset included above and should work out-of-the-box.  
 
 ![alt text](https://github.com/Owais-Khan/CardiovascularPINNs/blob/main/Figures/Figure1_Stenosis_Mapping.png)
 
 # Steps to use the CardiovascularPINNs framework
 ## Step 1. Preparing Training Data and Input Points
-You will need a folder that contains the CFD simulation or experimental data (i.e., velocity and pressures). The data needs to be in vtkXMLUnstructured format (i.e., .vtu file format). You may use SimVascular to run CFD simulations to obtain your own "ground-truth" CFD data that can seamlessly be used with this framework. 
+You will need a folder that contains the CFD simulation or experimental data (i.e., velocity and pressures). The data needs to be in vtkXMLUnstructured format (i.e., .vtu file format). You may use SimVascular to run CFD simulations to obtain your own "ground-truth" CFD data that can seamlessly be used with this framework. We have provided sample data in the the subfolder ```VelocityData3D``` that contains velocity and pressure fields obtained from SimVascular CFD simulations.  
 
-We have provided sample data in the the subfolder ```VelocityData3D``` that contains velocity and pressure fields obtained from SimVascular CFD simulations. The CFD simulations were run for 4 cycles with 10,000 timesteps per cardiac cycle. The data from the last cardiac cycle was projected onto a coarser mesh of approximately 240,000 tetrahedral cells. 
+You will also need to store wall boundaries in vtkPolyData format (i.e., .vtp surface files), which will be used to prescribe zero-velocity on the mesh wall. We have added a subfolder in ```VelocityData3D/WallMesh/wall.vtp``` that contains the wall mesh. If you are using SimVascular, you can easily obtain this file from the mesh-complete folder (e.g., ```mesh-complete/mesh-surfaces/walls.vtp```)
 
-You will also need to store wall boundaries in vtkPolyData format (i.e., .vtp surface files), which will be used to prescribe zero-velocity on the mesh wall. We have added a subfolder in ```VelocityData3D/WallMesh/wall.vtp```. If you are using SimVascular, you can easily obtain this file from the mesh-complete folder (e.g., ```mesh-complete/mesh-surfaces/walls.vtp```)
-
-## Step2. Run CardiovascularPINNs to inversely obtained blood flow data in 3D Models
+## Step2. Run CardiovascularPINNs 
 To run the framework, you need to run the following command:
 ```console
 foo@bar:~$ python main_3D.py -InputFolder [/path/to/VelocityData3D]
 ```
-To run the framework using the sample data, you can run the following command:
+To run the framework using the sample data provided with this repository, you can run the following command:
 ```console
 foo@bar:~$ python main_3D.py -InputFolder ~/VelocityData3D/ -Viscosity 0.000452638 -Density 1
 ```
@@ -42,6 +40,7 @@ Optional argumens are provided below:
 | Viscosity                   | float | Assign the dynamic viscosity of blood. | 0.04 |
 | Density                     | float | Assign the density of blood. | 1.06 |
 | SkipFiles                   | int   | Assign how many files to skip in the velocity data files | 1 |
+| SaveAfter                   | int   | Assign after which epoch to start saving the data. | 100 |
 | GPUFlag                     | int   | Assing whether to use GPU rather than CPU. Default is 1. [0=CPU, 1=GPU, 2=MPS]. | 1 |
 | Dimension                   | int   | The dimension of the geometric problem. Could be 2 or 3. | 1 |
 | TimeVarying                 | int   | Assign whether the problem is steady-state [=0] of time-varying [=1] | 1 |
