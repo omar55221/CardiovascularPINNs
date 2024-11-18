@@ -53,7 +53,7 @@ Optional argumens are provided below:
 | Shuffle                     | int   | Assign if the input data needs to be shuffled [=1] or remain unshuffled [0] | 1 | 
 | Lambda                      | float | Assign smoothing factor for moving average on Lambda_bc and Lambda_data in the loss function. | 0.9 |
 | DynamicLearningRate         | int   | Assign whether to use dynamic [=1] or constant [=0] learning rate for loss function. | 1 |
-| LearningRate                | float | Assign the learning rate for the training process. | 1e-3 |
+| LearningRate                | float | Assign the learning rate for the training process. | 0.001 |
 | NumberOfEpoches             | int   | Assign the number of epoches to run the training process. | 400 |
 | StepEpoches                 | int   | Assign after how many epoches you want to change the learning rate. | 70 |
 | DecayRate                   | float | Assign the decay rate (i.e., learning rate multiplies by this number after StepEpoches. | 0.1 |
