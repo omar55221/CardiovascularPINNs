@@ -57,7 +57,7 @@ Optional argumens are provided below:
 | NumberOfEpoches             | int   | Assign the number of epoches to run the training process. | 400 |
 | StepEpoches                 | int   | Assign after how many epoches you want to change the learning rate. | 70 |
 | DecayRate                   | float | Assign the decay rate (i.e., learning rate multiplies by this number after StepEpoches. | 0.1 |
-| OutputFolder                | str   | Assign the name of the output folder. By default, it will be one folder up from the velocity data folder.| |
+| OutputFolder                | str   | Assign the name of the output folder. By default, it will be one folder up from the velocity data folder.| 0 |
 
 
 ### main.py
