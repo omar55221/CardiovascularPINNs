@@ -80,12 +80,12 @@ These files contain feed-forward neural networks with different activation funct
 ### SirenResNetNN.py
 This file contains the coding for feed-forward neural networks with sinusoidal activation functions and skip connections.
 
-## JobScript.sh
+### JobScript.sh
 This file submits a job for running the code on the compute cluster. The script is defined for the MIST cluster at the SciNet HPC Consortium.
 
-## VelocityData2D
+### VelocityData2D
 This folder contains the 2D stenosis case data
 
-## VelocityData3D
+### VelocityData3D
 This folder contains velocity field in a 3D aortic geometry obtained from CFD simulations run with SimVascular. The simulatations were run at ~7 million tetrahedral elements with 10,000 timesteps per cardiac cycle, and subsequently projected to a coarse mesh. 
 
