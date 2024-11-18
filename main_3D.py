@@ -1,5 +1,5 @@
 import numpy as np
-
+import argparse
 from ReadMeshComplete import *
 import vtk
 from matplotlib import pyplot as plt
@@ -13,22 +13,25 @@ from numpy import arange
 
 
 class CardiovascularPINNs():
-	def __init__(self):
+	def __init__(self, Args):
 		self.Args=Args
 	
 		#Make an output directory to store the PINNs Predictions
 		if self.Args.OutputFolder is None:
-			self.Args.OutputFolder=os.path.join(self.Args.InputFolder+"../PINNsPredictions/")
-			os.makedirs(self.Arg.OutputFolder)
+			self.Args.OutputFolder=os.path.join(self.Args.InputFolder+"/PINNsPredictions/")
+			if not os.path.exists(self.Args.InputFolder+"/PINNsPredictions/"):
+				os.makedirs(self.Args.OutputFolder)
 			print ("--- Output Folder is: %s"%self.Args.OutputFolder)
 	
 		#Create a name for the output file
 		if self.Args.OutputFileName is None:
-			self.OutputFileName=self.Args.ActivationFunction+"_layern%d"%num_layers+"_hiddenlayern%d"%dim_hidden+"_SensNum%d"%sensor_num+"_Rho%d"%Rho+"_Diff"+str(Diff)+"_w0siren"+str(w0)
-			self.Args.OutputFileName=os.path.join(self.Args.OutputFolder,self.OutputFileName)
+			self.OutputFileName = self.Args.ActivationFunction+"_layern%d"%self.Args.NumberOfLayers+"_hiddenlayern%d"%self.Args.NumberOfNeurons+"_SensNum%d"%self.Args.NumberOfSensorPoints+"_Rho%d"%self.Args.Density+"_Diff"+str(self.Args.Viscosity)+"_w0siren"+str(self.Args.Omega0)
+			self.Args.OutputFolder = os.path.join(self.Args.OutputFolder,self.OutputFileName)
+			if not os.path.exists(self.Args.OutputFolder):
+				os.makedirs(self.Args.OutputFolder)
 
-		if self.Args.Shuffle is 1: self.Args.Shuffle=True
-		else: self.Args.Shuffle=False
+		if self.Args.Shuffle is 1: self.Args.Shuffle = True
+		else: self.Args.Shuffle = False
 		
 		if self.Args.DynamicLearningRate is 1: self.Args.DynamicLearningRate=True
 		else: self.Args.DynamicLearningRate=False
@@ -37,14 +40,14 @@ class CardiovascularPINNs():
 		else: self.NumberOfInputs=self.Args.Dimension
 		
 
-                # Define device and processor for CPU, GPU or MacOS
-		if self.Args.FlagGPU == 0:
+		# Define device and processor for CPU, GPU or MacOS
+		if self.Args.GPUFlag == 0:
 			self.device = torch.device("cpu")
 			self.processor = "cpu"
-		if Flag_GPU == 1:
+		if self.Args.GPUFlag == 1:
 			self.device = torch.device("cuda:0")
 			self.processor = "cuda:0"
-		if Flag_GPU == 2:
+		if self.Args.GPUFlag == 2:
 			self.device = torch.device("mps")
 			self.processor = "mps"
 
@@ -83,19 +86,19 @@ class CardiovascularPINNs():
 
 		#Output the loss function in excel format	
 		if not os.path.isfile(self.Args.OutputFolder+"/loss.xlsx"):
-		    headers= ['Loss_eqn', 'Loss_BC', 'Loss_Data', 'Loss_total', 'Time', 'DynamicCoeffBC', 'DynamicCoeffData']
-		    workbook_name = os.path.join(self.Args.OutputFolder,"loss.xlsx")
-		    wb = Workbook()
-		    page = wb.active
-		    page.title = "Project_%s"%self.ActivationFunction #'Siren-Based-3Daorta'
-		    page.append(headers) # write the headers to the first line
-		    wb.save(filename=workbook_name)
+			headers= ['Loss_eqn', 'Loss_BC', 'Loss_Data', 'Loss_total', 'Training_Time(s)', 'DynamicCoeffBC', 'DynamicCoeffData']
+			workbook_name = os.path.join(self.Args.OutputFolder, "loss.xlsx")
+			wb = Workbook()
+			page = wb.active
+			page.title = "Project_%s"%self.Args.ActivationFunction 
+			page.append(headers) # write the headers to the first line
+			wb.save(filename=workbook_name)
 
 
 		if self.Args.TimeVarying == 0:  # make T if the model is steady state to avoid error
-		    T_walls = np.zeros(shape=xb_wall.shape)
-		    T_sensors = np.zeros(shape=x_data.shape)
-		    T = np.zeros(shape=x.shape)
+			T_walls = np.zeros(shape=xb_wall.shape)
+			T_sensors = np.zeros(shape=x_data.shape)
+			T = np.zeros(shape=x.shape)
 		    
 
 
@@ -119,7 +122,7 @@ class CardiovascularPINNs():
 		            "Diff":                     self.Args.Viscosity,                  #Dynamic viscosity of fluid.
 		            "rho":                      self.Args.Density,                    #The density of the fluid
 		            "Lambda":                   self.Args.Lambda,                     #Coefficent factor of boundary condition in the loss function
-		            "Path_NetWeights":          self.Args.OutputFolder,               #Path for saving the weights
+		            "Path_NetWeights":          self.Args.OutputFolder,             #Path for saving the weights
 		            "ActivationFunction":       self.Args.ActivationFunction,         # Which AF neural net
 		            "NumberOfLayers":           self.Args.NumberOfLayers,             # Number of layers
 		            "NumberOfHiddenNeurons":    self.Args.NumberOfNeurons,            # Number of Neurons in each layer
@@ -130,7 +133,7 @@ class CardiovascularPINNs():
 		            "sampling_rate":            1,                                    # What is Sampling rate?
 		            "NumberOfSampleFiles":      self.NumberOfFiles,                   # How many sample file do we have
 		            "shuffle":                  self.Args.Shuffle,                    # Input data should be shuffled or not?
-		            "input_files":              self.NumberOfFiles,                   # Input data address
+		            "input_files":              self.Args.InputFolder,                   # Input data address
 		            "vtu_files":                vtu_files
 		            }
 
@@ -139,17 +142,17 @@ class CardiovascularPINNs():
 
 
 if __name__=="__main__":
-        #Description
+	#Description
         
 	parser = argparse.ArgumentParser(description="This script will generate tecplot files from perfusion territory vtu files.")
                         
-        #Input filename of the perfusion map
+	#Input filename of the perfusion map
 	parser.add_argument('-InputFolder', '--InputFolder', type=str, required=True, dest="InputFolder",help="The folder containing the velocity files and wall nodes.")
 	
 
 	parser.add_argument('-SkipFiles', '--SkipFiles', type=int, required=False, default=1, dest="SkipFiles",help="Assign the increment to skip for the total number of velocity files.")
 	
-	parser.add_argument('-VelocityArrayName', '--VelocityArrayName', type=str, required=False,default="velocity", dest="ArrayName",help="Name for the velocity array in the data files.")
+	parser.add_argument('-VelocityArrayName', '--VelocityArrayName', type=str, required=False, default="velocity", dest="VelocityArrayName",help="Name for the velocity array in the data files.")
 	
 	parser.add_argument('-GPUFlag', '--GPUFlag', type=int, required=False,default=1, dest="GPUFlag",help="Flag to use GPU rather than CPU. Default is 1. [0=CPU, 1=GPU, 2=MPS].")               
 	
@@ -190,7 +193,9 @@ if __name__=="__main__":
 	
 	parser.add_argument('-OutputFolder', '-OutputFolder', type=str, required=False, dest="OutputFolder", help="Assign the name of the output folder. By default, it will be one folder up from the velocity data folder.")
 	
-	args=parser.parse_args() 
+	parser.add_argument('-OutputFileName', '-OutputFileName', type=str, required=False, dest="OutputFileName", help="Assign the name of the output folder for this specific run. By default, it will be one folder named based on the PINNs configuration you set.")
+	
+	args=parser.parse_args()
         
-	CariovascularPINNs(args).main()    
+	CardiovascularPINNs(args).main()    
 

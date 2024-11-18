@@ -304,9 +304,9 @@ def geo_train(InputParameters):
 
 
 	Flag_pretrain = True # True #If true reads the nets from last run
-	if(Flag_pretrain & os.path.isfile(InputParameters["Path_NetWeights"]+"sten_data" + ".pt")):
+	if(Flag_pretrain & os.path.isfile(InputParameters["Path_NetWeights"]+"/sten_data" + ".pt")):
 		print('Reading (pretrain) functions first...')
-		net2.load_state_dict(torch.load(InputParameters["Path_NetWeights"]+"sten_data" + ".pt"))
+		net2.load_state_dict(torch.load(InputParameters["Path_NetWeights"]+"/sten_data" + ".pt"))
 
 	if (InputParameters["Flag_schedule"]):
 		scheduler_u = torch.optim.lr_scheduler.StepLR(optimizer_Siren, step_size=InputParameters["step_epoches"], gamma=InputParameters["decay_rate"])
@@ -317,7 +317,7 @@ def geo_train(InputParameters):
 
 	for epoch in range(InputParameters["epoches"]):
 				#THis black stores the initial setup
-		if not os.path.isfile(InputParameters["Path_NetWeights"]+"sten_data" + ".pt") and not os.path.exists(InputParameters["Path_NetWeights"]+"output_epoch_0000/"):
+		if not os.path.isfile(InputParameters["Path_NetWeights"]+"/sten_data" + ".pt") and not os.path.exists(InputParameters["Path_NetWeights"]+"output_epoch_0000/"):
 				if InputParameters["dim"]==2 and InputParameters["NumberOfInputs"] == 2: net_in = torch.cat((x.requires_grad_(), y.requires_grad_()), 1)
 				if InputParameters["dim"]==2 and InputParameters["NumberOfInputs"] == 3: net_in = torch.cat((x.requires_grad_(), y.requires_grad_(), T.requires_grad_()), 1)
 				if InputParameters["dim"]==3 and InputParameters["NumberOfInputs"] == 3: net_in = torch.cat((x.requires_grad_(), y.requires_grad_(), z.requires_grad_()), 1)
@@ -431,22 +431,24 @@ def geo_train(InputParameters):
 		loss_bc_tot = loss_bc_tot / n
 		loss_data_tot = loss_data_tot / n
 		loss_avg_tot = loss_eqn_tot + adaptive_constant_bc * loss_bc_tot + adaptive_constant_data*loss_data_tot
+		toc = time.time()
+		elapseTime = toc - tic
 		wb = Workbook()
-		workbook_name = InputParameters["Path_NetWeights"]+'loss.xlsx'
+		workbook_name = InputParameters["Path_NetWeights"]+'/loss.xlsx'
 		wb = load_workbook(workbook_name)
 		page = wb.active
-		information = [[loss_eqn_tot.cpu().detach().numpy(), loss_bc_tot.cpu().detach().numpy(), loss_data_tot.cpu().detach().numpy(), loss_avg_tot.cpu().detach().numpy()]]
+		information = [[loss_eqn_tot.cpu().detach().numpy(), loss_bc_tot.cpu().detach().numpy(), loss_data_tot.cpu().detach().numpy(), loss_avg_tot.cpu().detach().numpy(), elapseTime, adaptive_constant_bc, adaptive_constant_data]]
 		information=np.array(information)
 		for info in information.tolist():
 			page.append(info)
 		wb.save(filename=workbook_name)
 		_num_inloss = page.max_row
-		torch.save(net2.state_dict(), InputParameters["Path_NetWeights"]+"sten_data" + ".pt")
+		torch.save(net2.state_dict(), InputParameters["Path_NetWeights"]+"/sten_data" + ".pt")
 
 		print('*****Total avg Loss : Loss eqn {:.10f} Loss BC {:.10f} Loss data {:.10f} ****'.format(loss_eqn_tot, loss_bc_tot, loss_data_tot) )
 		print('learning rate is ', optimizer_Siren.param_groups[0]['lr'])
 
-		if _num_inloss % 10 == 0 and _num_inloss > 100:
+		if _num_inloss % 10 == 0 and _num_inloss > 95:
 				if InputParameters["dim"] == 2 and InputParameters["NumberOfInputs"] == 2: net_in = torch.cat((x.requires_grad_(), y.requires_grad_()),1)
 				if InputParameters["dim"] == 2 and InputParameters["NumberOfInputs"] == 3: net_in = torch.cat((x.requires_grad_(), y.requires_grad_(), T.requires_grad_()), 1)
 				if InputParameters["dim"] == 3 and InputParameters["NumberOfInputs"] == 3: net_in = torch.cat((x.requires_grad_(), y.requires_grad_(), z.requires_grad_()), 1)
@@ -455,8 +457,8 @@ def geo_train(InputParameters):
 				if InputParameters["NumberOfInputs"] > InputParameters["dim"]:  #model is time varying
 					for i in range(InputParameters['NumberOfSampleFiles']):
 						outneti = net2(net_in[i*InputParameters['NumberOfMechCoordinates']:(i+1)*InputParameters['NumberOfMechCoordinates'], :])
-						SaveVTU_TimeVarying(outneti, InputParameters["dim"], i, InputParameters["sampling_rate"], InputParameters["Path_NetWeights"], _num_inloss, InputParameters["input_files"], InputParameters["vtu_files"])
-				else:   # Model is steady not time varying
+						SaveVTU_TimeVarying(outneti, InputParameters["dim"], i, InputParameters["Path_NetWeights"], _num_inloss, InputParameters["input_files"], InputParameters["vtu_files"])
+				else:   # Model is steady not time varying InputParameters
 					outneti = net2(net_in)
 					SaveVTU_SteadyModel(outneti, InputParameters["dim"], InputParameters["MeshCompleteVTU"], InputParameters["Path_NetWeights"], _num_inloss)
 
@@ -469,7 +471,7 @@ def geo_train(InputParameters):
 	###################
 	#plot
 	if (1):#save network
-		torch.save(net2.state_dict(), InputParameters["Path_NetWeights"]+"sten_data" + ".pt")
+		torch.save(net2.state_dict(), InputParameters["Path_NetWeights"]+"/sten_data" + ".pt")
 		print("Data saved!")
 
 

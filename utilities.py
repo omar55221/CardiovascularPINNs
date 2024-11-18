@@ -383,9 +383,9 @@ def SaveVTU_TimeVarying(output_pinns, Model_dim, SampleNum_InTime, path, epoch, 
 	P_vectorVTK.SetName("pressure")
 	MeshCompleteVTU.GetPointData().AddArray(U_vectorVTK)
 	MeshCompleteVTU.Modified()
-	if not os.path.exists(path+"output_epoch_%.04d"%epoch+'/'):
-		os.mkdir(path+"output_epoch_%.04d"%epoch+'/')
-	WriteVTUFile(path+"output_epoch_%.04d"%epoch+'/' + 'sample'+vtu_files[SampleNum_InTime], MeshCompleteVTU)
+	if not os.path.exists(path+"/output_epoch_%.04d"%epoch+'/'):
+		os.mkdir(path+"/output_epoch_%.04d"%epoch+'/')
+	WriteVTUFile(path+"/output_epoch_%.04d"%epoch+'/' + 'sample'+vtu_files[SampleNum_InTime], MeshCompleteVTU)
 
 def SaveVTU_SteadyModel(output_pinns, Model_dim, MeshCompleteVTU, path, epoch):
 	output_u = output_pinns[:,0]
@@ -420,9 +420,9 @@ def SaveVTU_SteadyModel(output_pinns, Model_dim, MeshCompleteVTU, path, epoch):
 	MeshCompleteVTU.GetPointData().AddArray(U_vectorVTK)
 	MeshCompleteVTU.Modified()
 	#Write the output file
-	if not os.path.exists(path+"steadymodel/"):
-		os.mkdir(path+"steadymodel/")
-	WriteVTUFile(path+"steadymodel/"+"output_epoch_%.04d"%epoch+'.vtu',MeshCompleteVTU)
+	if not os.path.exists(path+"/steadymodel/"):
+		os.mkdir(path+"/steadymodel/")
+	WriteVTUFile(path+"/steadymodel/"+"output_epoch_%.04d"%epoch+'.vtu',MeshCompleteVTU)
 
 def sort_vtuFiles_WallFolder(folder_path_velocity):
 	vtu_files = []

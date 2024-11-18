@@ -28,9 +28,7 @@ To run the framework, you need to run the following command:
 ```console
 foo@bar:~$ python main.py -InputFolder [/path/to/VelocityData3D]
 ```
-There are several optional arguments:
-
--```-VelocityArrayName```: Name of the velocity array in the velocity data file. Default is ```velocity```.
+Optiona
 
 ### main.py
 This file is the main code. All the hyperparameters are in this file, including the input data paths.
