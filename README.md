@@ -32,7 +32,14 @@ Optional argumens are provided below:
 
 | Argument | Type | Description | Default |
 | ---      | ---  |  ---        | ---     |
-| VelocityArrayName | str | Assign the name of velocity array in velocity data files | velocity |  
+| VelocityArrayName           | str | Assign the name of velocity array in velocity data files | velocity |
+| SkipFiles                   | int | Assign how many files to skip in the velocity data files | 1 |
+| GPUFlag                     | int | Assing whether to use GPU rather than CPU. Default is 1. [0=CPU, 1=GPU, 2=MPS]. | 1 |
+| Dimension                   | int | The dimension of the geometric problem. Could be 2 or 3. | 1 |
+| TimeVarying                 | int | Assign whether the problem is steady-state [=0] of time-varying [=1] | 1 |
+| ActivationFunction          | str | Assign the activation function: tanh, swish, sinus or sinusResNet. | tanh |
+| NumberOfSensorPoints        | int | Assign the number of sensor data points to sample from velocity data files. | 800 |
+ 
 
 ### main.py
 This file is the main code. All the hyperparameters are in this file, including the input data paths.
