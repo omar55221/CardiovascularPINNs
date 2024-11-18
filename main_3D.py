@@ -154,6 +154,13 @@ if __name__=="__main__":
 	
 	parser.add_argument('-VelocityArrayName', '--VelocityArrayName', type=str, required=False, default="velocity", dest="VelocityArrayName",help="Name for the velocity array in the data files.")
 	
+	parser.add_argument('-Period', '-Period', type=float, required=False, default=1.0, dest="Period", help="Assign the period of the cardiac cycle. Default is 1.0.")
+
+	parser.add_argument('-Viscosity', '-Viscosity', type=float, required=False, default=0.04, dest="Viscosity", help="Assign the dynamic viscosity of blood. Default is 0.04 poise. Use 0.000452638 for sample data in github repository.")
+        
+	parser.add_argument('-Density', '-Density', type=float, required=False, default=1.06, dest="Density", help="Assign the density of blood. Default is 1.06 g/cm3. Use 1.0 for sample data in github repository.")
+
+	
 	parser.add_argument('-GPUFlag', '--GPUFlag', type=int, required=False,default=1, dest="GPUFlag",help="Flag to use GPU rather than CPU. Default is 1. [0=CPU, 1=GPU, 2=MPS].")               
 	
 	parser.add_argument('-Dimension', '-Dimension', type=int, required=False, default=3, dest="Dimension", help="The dimension of the geometric problem. Could be 2 or 3. Default is 3.")
@@ -170,16 +177,15 @@ if __name__=="__main__":
 	
 	parser.add_argument('-Omega0', '-Omega0', type=int, required=False, default=25, dest="Omega0", help="Only specified for the sinus activation and sinusResNet model. This parameter assigns the frequency for the first layer to improve performance. Default is 25 for 3D Aorta.")
 	
-	parser.add_argument('-Period', '-Period', type=float, required=False, default=1.0, dest="Period", help="Assign the period of the cardiac cycle. Default is 1.0.")
 	
 	parser.add_argument('-BatchSize', '-BatchSize', type=float, required=False, default=512, dest="BatchSize", help="Assign the batch size.")
 	parser.add_argument('-Shuffle', '-Shuffle', type=int, required=False, default=1, dest="Shuffle", help="Assign if input data needs to be shuffled. Default is 1.")
 	
 	parser.add_argument('-Lambda', '-Lambda', type=float, required=False, default=0.9, dest="Lambda", help="Assign smoothing factor for moving average on Lambda_bc and Lambda_data in the loss function. Default is 0.9.")
 	
-	parser.add_argument('-Viscosity', '-Viscosity', type=float, required=False, default=0.000452638, dest="Viscosity", help="Assign the dynamic viscosity of blood. Default is 0.04 poise. Use 0.000452638 for sample data in github repository.")
+	parser.add_argument('-Viscosity', '-Viscosity', type=float, required=False, default=0.04, dest="Viscosity", help="Assign the dynamic viscosity of blood. Default is 0.04 poise. Use 0.000452638 for sample data in github repository.")
 	
-	parser.add_argument('-Density', '-Density', type=float, required=False, default=1.0, dest="Density", help="Assign the density of blood. Default is 1.06 g/cm3. Use 1.0 for sample data in github repository.")
+	parser.add_argument('-Density', '-Density', type=float, required=False, default=1.06, dest="Density", help="Assign the density of blood. Default is 1.06 g/cm3. Use 1.0 for sample data in github repository.")
 	
 	parser.add_argument('-DynamicLearningRate', '-DynamicLearningRate', type=int, required=False, default=1, dest="DynamicLearningRate", help="Assign whether to use constant or dynamic learning rate. Default is 1. [1=Dynamic Learning Rate, 0=Constant Learning Rate].")
 	
