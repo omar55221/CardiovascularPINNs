@@ -3,6 +3,7 @@
 CardiovascularPINNs can be used to inversely train a neural network to simulate blood flow in vascular models. For more details about this framework, please refer to the following papers:
 
 [Aghaee A. and Khan MO., "Performance of Fourier-based Activation Function in Physics-Informed Neural Netoworks for Patient-specific Cardiovascular Flows", Computer Methods and Programs in Biomedicine, 2024.](https://doi.org/10.1016/j.cmpb.2024.108081) 
+
 [Aghaee A. and Khan MO., "Pinning down the accuracy of physics-informed neural networks under laminar and turbulent-like aortic blood flow conditions", Computers in Biology and Medicine, 2025.](https://doi.org/10.1016/j.compbiomed.2024.109528) 
 
 
