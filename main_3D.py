@@ -30,13 +30,13 @@ class CardiovascularPINNs():
 			if not os.path.exists(self.Args.OutputFolder):
 				os.makedirs(self.Args.OutputFolder)
 
-		if self.Args.Shuffle is 1: self.Args.Shuffle = True
+		if self.Args.Shuffle == 1: self.Args.Shuffle = True
 		else: self.Args.Shuffle = False
 		
-		if self.Args.DynamicLearningRate is 1: self.Args.DynamicLearningRate=True
+		if self.Args.DynamicLearningRate == 1: self.Args.DynamicLearningRate=True
 		else: self.Args.DynamicLearningRate=False
 
-		if self.Args.TimeVarying is 1: self.NumberOfInputs=self.Args.Dimension+1
+		if self.Args.TimeVarying == 1: self.NumberOfInputs=self.Args.Dimension+1
 		else: self.NumberOfInputs=self.Args.Dimension
 		
 
